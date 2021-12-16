@@ -232,7 +232,7 @@ def vcftogvf(var_data, strain, GENE_POSITIONS_DICT, names_to_split):
     new_df['#attributes'] = new_df['#attributes'].astype(str) + 'vcf_gene=' + new_df['vcf_gene'] + ';' #gene names
     new_df['#attributes'] = new_df['#attributes'].astype(str) + 'mutation_type=' + new_df['mutation_type'] + ';' #mutation type
 
-    #add strain name, multi-aa notes, sample_size
+    #add strain name, multi-aa notes
     new_df['#attributes'] = new_df['#attributes'] + 'viral_lineage=' + strain + ';'
     new_df['#attributes'] = new_df['#attributes'] + "multi_aa_name=" + new_df["multi_name"] + ';'
 
