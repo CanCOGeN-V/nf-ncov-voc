@@ -154,8 +154,8 @@ def streamline_tsv(tsv_df):
 
     #remove trailing zeros and commas from 'ao'
     final_df.ao = final_df.ao.str.replace(',0.0','', regex=True)
-    #make 'ao' integer type
-    final_df.ao = final_df.ao.astype(int)
+    #make 'ao' into comma-separated integers
+    final_df.ao = final_df.ao.str.replace('.0','', regex=True)
     
     #add variant_pop_size
     final_df['variant_pop_size'] = variant_pop_size
