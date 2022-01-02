@@ -19,9 +19,7 @@ import os
 def parse_args():
     
     parser = argparse.ArgumentParser(
-        description='Converts a GVF file to a TSV')
-    parser.add_argument('--gvf_directory', type=str, default=None,
-                        help='Path to GVF-containing directory')
+        description='Converts GVF files to a TSV report')
     parser.add_argument('--gvf_files', type=str, default=None, nargs='*',
                         help='Paths to GVF files to process')
     parser.add_argument('--clades', type=str, default=None,
@@ -38,24 +36,6 @@ def parse_args():
 
     return parser.parse_args()
 
-
-def find_gvfs(pango_lineage_list, gvf_directory):
-    """This function searches for gvf files in a directory which have filenames that contain specified lineage names.
-    :param pango_lineage_list: Pangolin lineages to include in the report
-    :type pango_lineage_list: list of strings
-    :param gvf_directory: directory to search for gvf files
-    :type gvf_directory: string 
-    :return: list of gvf filenames to process for the report
-    """
-    gvf_files = []
-    
-    for pango_lineage in pango_lineage_list:
-        for path, dirs, filenames in os.walk(gvf_directory):
-            for f in filenames:
-                if f.startswith(pango_lineage.replace("*","")) and f.endswith(".gvf"):
-                    gvf_files.append(gvf_directory + '/' + f)
-
-    return gvf_files
 
 
 def match_gvfs_to_who_variant(pango_lineage_list, gvf_files_list):
@@ -229,7 +209,6 @@ if __name__ == '__main__':
     
     filepath = args.outtsv
     clade_file = args.clades
-    gvf_directory = args.gvf_directory #directory to search
     gvf_files_list = args.gvf_files
     
     #read in WHO variant/PANGO lineage .tsv
@@ -251,8 +230,6 @@ if __name__ == '__main__':
         variant_pop_size = find_variant_pop_size(args.table, pango_lineages)
         
         #get list of gvf files pertaining to variant
-        #gvf_files = find_gvfs(pango_lineages, gvf_directory)
-        #gvf_files = gvf_files_list
         gvf_files = match_gvfs_to_who_variant(pango_lineages, gvf_files_list)
         print(str(len(gvf_files)) + " GVF files found for " + who_variant + " variant.")
     
