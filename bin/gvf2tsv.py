@@ -22,6 +22,8 @@ def parse_args():
         description='Converts a GVF file to a TSV')
     parser.add_argument('--gvf_directory', type=str, default=None,
                         help='Path to GVF-containing directory')
+    parser.add_argument('--gvf_files', type=str, default=None, nargs='*',
+                        help='Paths to GVF files to process')
     parser.add_argument('--clades', type=str, default=None,
                         help='TSV file of WHO strain names and VOC/VOI status')
     parser.add_argument('--outtsv', type=str, default="surveillance_report",
@@ -55,6 +57,19 @@ def find_gvfs(pango_lineage_list, gvf_directory):
 
     return gvf_files
 
+
+def match_gvfs_to_who_variant(pango_lineage_list, gvf_files_list):
+    
+    matched_files = []
+    
+    for pango_lineage in pango_lineage_list:
+            for f in gvf_files_list:
+                if f.startswith(pango_lineage.replace("*","")) and f.endswith(".gvf"):
+                    matched_files.append(f)
+
+    return matched_files
+  
+    
 
 def find_variant_pop_size(table, pango_lineage_list):
     strain_tsv_df = pd.read_csv(table, header=0, delim_whitespace=True, usecols=['file', 'num_seqs'])  
@@ -215,6 +230,7 @@ if __name__ == '__main__':
     filepath = args.outtsv
     clade_file = args.clades
     gvf_directory = args.gvf_directory #directory to search
+    gvf_files_list = args.gvf_files
     
     #read in WHO variant/PANGO lineage .tsv
     clades = pd.read_csv(clade_file, sep='\t', header=0, usecols=['who_variant', 'pango_lineage']) #load clade-defining mutations file
@@ -235,7 +251,9 @@ if __name__ == '__main__':
         variant_pop_size = find_variant_pop_size(args.table, pango_lineages)
         
         #get list of gvf files pertaining to variant
-        gvf_files = find_gvfs(pango_lineages, gvf_directory)
+        #gvf_files = find_gvfs(pango_lineages, gvf_directory)
+        #gvf_files = gvf_files_list
+        gvf_files = match_gvfs_to_who_variant(pango_lineages, gvf_files_list)
         print(str(len(gvf_files)) + " GVF files found for " + who_variant + " variant.")
     
         #if any GVF files are found, create a surveillance report
